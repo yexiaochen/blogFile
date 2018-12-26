@@ -12,19 +12,69 @@ tags:
 
 将 ***File*** 和 ***Blob*** 类型的文件或数据异步读入内存.
 
-### 实例属性
+### InstanceOfFileReader Properties
 
-***instanceOfFileReader.error(只读)*** : 在读取文件时的出现的错误.
+**instanceOfFileReader.error(只读)** : 在读取时的出现的错误.
+**instanceOfFileReader.readyState(只读)** : 提供读取操作时的状态.
+|Value(readyState)|State(FileReader)|Description|
+|:---:|:---:|:---:|
+|0|EMPTY|未加载任何数据|
+|1|LOADING|加载数据中|
+|2|DONE|已完成数据读取|
+**instanceOfFileReader.result(只读)** : 读取的结果, 要么是 ***String***, 要么是 ***ArrayBuffer***, 这取决于读取的方法, 且仅在 ***load*** 事件触发后可用.
 
-***instanceOfFileReader.readyState(只读)*** :
+```JavaScript
+  const stateNames = {
+    [FileReader.EMPTY] : 'EMPTY',
+    [FileReader.LOADING] : 'LOADING',
+    [FileReader.DONE] : 'DONE'
+  };
+  let openFile = function(event) {
+    let input = event.target;
+    let reader = new FileReader();
+    // 打开注解即可查看隐藏属性
+    // reader.onloadstart = function() {
+    //   reader.abort();
+    // };
+    reader.onprogress = function(e) {
+      console.log('Event: ', e.type)
+    };
+    reader.onload = function(e) {
+      console.log('Event: ', e.type)
+    };
+    reader.onloadend = function(e) {
+      console.log('Event: ', e.type)
+      console.log(reader.error.message);
+    };
+    reader.onabort = function(e) {
+      console.log('Event: ', e.type)
+    }
+    reader.onerror = function(e) {
+      console.log('Event: ', e.type)
+      console.log(reader.error.message);
+    }
+    reader.onload = function(){
+      let dataURL = reader.result;
+      console.log('ReadyState: ' + stateNames[reader.readyState]);
+      console.log('Result: ', dataURL)
+    };
+    console.log('ReadyState: ' + stateNames[reader.readyState]);
+    // 打开注解即可查看隐藏属性
+    // reader.readAsDataURL(input.files[0]);
+    // reader.readAsArrayBuffer(input.files[0])
+    reader.readAsText(input.files[0])
+    console.log('ReadyState: ' + stateNames[reader.readyState]);
+  };
+```
 
-***instanceOfFileReader.result(只读)*** :
+### InstanceOfFileReader Methods
 
-### 实例方法
+**instanceOfFileReader.abort()** : 终止读取操作.
+**instanceOfFileReader.readAsArrayBuffer()** :
+**instanceOfFileReader.readAsDataURL()** :
+**instanceOfFileReader.readAsText()** :
 
-#### instanceOfFileReader
-
-### 实例事件
+### InstanceOfFileReader Events
 
 ## Blob
 
@@ -33,4 +83,3 @@ tags:
 ## 下载
 
 ## 上传「读取」
-
