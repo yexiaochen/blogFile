@@ -70,11 +70,18 @@ tags:
 ### InstanceOfFileReader Methods
 
 **instanceOfFileReader.abort()** : 终止读取操作.
-**instanceOfFileReader.readAsArrayBuffer()** :
-**instanceOfFileReader.readAsDataURL()** :
-**instanceOfFileReader.readAsText()** :
+**instanceOfFileReader.readAsArrayBuffer()** : 以 ***ArrayBuffer*** 类型为输出结果进行读取.
+**instanceOfFileReader.readAsDataURL()** : 以 ***data: URL*** 类型为输出结果进行读取.
+**instanceOfFileReader.readAsText()** : 以 ***String*** 类型为输出结果进行读取.
 
 ### InstanceOfFileReader Events
+
+**onloadstart/'loadstart'** :
+**onprogress/'progress'** :
+**onload/'load'** :
+**onabort/'abort'** :
+**onerror/'error'** :
+**onloadend/'loadend'** :
 
 ## Blob
 
