@@ -134,7 +134,7 @@ tags:
 ### Object.freeze()
 
 **描述** :
-冻结一个对象, 将不能向该对象添加新的属性, 不能修改、删除已有属性, 以及不能修改已有属性的可枚举性、可配置性、可写性. 如果属性是对象, 除非被冻结, 否则也是可以修改的. 数组作为对象, 被冻结后, 元素不可被修改.
+冻结一个对象, 将不能向该对象添加新的属性, 不能修改、删除已有属性, 以及不能修改已有属性的可枚举性、可配置性、可写性. 如果属性是对象, 除非被冻结, 否则也是可以修改的. 数组作为对象, 被冻结后, 元素不可被修改. `[[Extensible]]` 内部属性为 ***false***. 对象属性的 `[[Configurable]]` 为false. 若是对象属性描述符为数据描述符, 则对象属性的 `[[Writable]]` 为 ***false***.
 **语法** :
 > *`Object.freeze(target)`*
 **`target`** : 目标对象.
@@ -230,7 +230,7 @@ tags:
 ### Object.getPrototypeOf()
 
 **描述** :
-获取给定对象的原型(内部 `Prototype` 属性的值). 若没有即成属性, 则返回 ***null***.
+获取给定对象的原型(内部 `[[Prototype]]` 属性的值). 若没有即成属性, 则返回 ***null***.
 **语法** :
 > *`Object.getOwnPropertyNames(target)`*
 **`target`** : 目标对象.
@@ -252,8 +252,61 @@ tags:
 ```
 
 ### Object.is()
+
+**描述** :
+判断两个值是否相等. 规则和抽象相等、严格相等不一样.
+**语法** :
+> *`Object.is(target1, target2)`*
+**`target`** : 需要比较的两个值.
+
+```JavaScript
+    Object.is(undefined, undefined)    // true
+    Object.is(null, null)  // true
+    Object.is(true, true)  // true
+    Object.is(false, false)    // true
+    Object.is(+0, +0)  // true
+    Object.is(NaN, NaN)    // true *
+    Object.is(-0, -0)  //true
+```
+
 ### Object.isExtensible()
+
+**描述** :
+判断一个对象是否可扩展的. 即是否可添加新的属性. 新对象 `[[Extensible]]` 默认为 ***true*** . ***Object.preventExtensions(target)***, ***Object.seal(target)*** 或 ***Object.freeze(target)*** 可将目标对象内部属性 `[[Extensible]]` 置为 ***false***.
+**语法** :
+> *`Object.isExtensible(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {}
+    let boolean_1 = Object.isExtensible(obj)
+    Object.freeze(obj)
+    let boolean_2 = Object.isExtensible(obj)
+    // > boolean_1
+    // true
+    // > boolean_2
+    // false
+```
+
 ### Object.isFrozen()
+
+**描述** :
+判断一个对象是否被冻结. 对象的内部属性 `[[Extensible]]` 为 ***false***, 返回 ***true***. 若对象属性的 `[[Configurable]]` 为 ***true***, 返回 ***false***. 若是对象属性描述符为数据描述符, 对象属性的 `[[Writable]]` 为 ***true***, 返回 ***false***. 否则, 返回 ***false***.
+**语法** :
+> *`Object.isFrozen(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {}
+    let boolean_1 = Object.isExtensible(obj)
+    Object.freeze(obj)
+    let boolean_2 = Object.isExtensible(obj)
+    // > boolean_1
+    // true
+    // > boolean_2
+    // false
+```
+
 ### OObject.isSealed()
 ### Object.keys()
 ### Object.preventExtensions()
