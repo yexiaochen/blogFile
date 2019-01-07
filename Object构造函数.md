@@ -14,6 +14,109 @@ tags:
 
 ## 构造函数方法
 
+### Object.keys()
+
+**描述** :
+获取给定对象自身可枚举属性(字符串)组成的数组.
+> *`Object.keys(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {
+        a: 'hello'
+    }
+    Object.defineProperty(obj, 'b', {value: 'world'})
+    let property_1 = Object.getOwnPropertyDescriptor(obj, 'a')
+    let property_2 = Object.getOwnPropertyDescriptor(obj, 'b')
+    let propertyArray = Object.keys(obj);
+    // > property_1
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: true }
+    // > property_2
+    // { value: 'world',
+    // writable: false,
+    // enumerable: false,
+    // configurable: false }
+    // > propertyArray
+    // [ 'a' ]
+```
+
+### Object.values()
+
+**描述** :
+获取给定对象自身可枚举属性值组成的数组.
+> *`Object.values(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {
+        a: 'hello',
+        b: () => {
+            console.log('hello')
+        }
+    }
+    Object.defineProperty(obj, 'c', {value: 'world'})
+    let property_1 = Object.getOwnPropertyDescriptor(obj, 'a')
+    let property_2 = Object.getOwnPropertyDescriptor(obj, 'c')
+    let valuesArray = Object.values(obj);
+    // > property_1
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: true }
+    // > property_2
+    // { value: 'world',
+    // writable: false,
+    // enumerable: false,
+    // configurable: false }
+    // > valuesArray
+    // [ 'hello', [Function: b] ]
+```
+
+### Object.entries()
+
+**描述** :
+由给定对象自身可枚举属性的键值对数组组成的数组. 属性的顺序与通过 `for...in` 循环对象的属性值所给出的顺序相同.
+**语法** :
+> *`Object.entries(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj_1 = {
+        a: 'hello',
+        b: 'word'
+    }
+    let obj_2 = Object.entries(obj_1)
+    // > obj_2
+    // [ [ 'a', 'hello' ], [ 'b', 'word' ] ]
+
+    let map = new Map(obj_2)
+    // > map
+    // Map { 'a' => 'hello', 'b' => 'word' }
+
+```
+
+### Object.create()
+
+**描述** :
+创建一个新对象, 并将内部属性 ***`[[Prototype]]`*** 指向源对象.
+**语法** :
+> *`Object.create(sources[, Properties])`*
+**`sources`** : 提供原型的源对象.
+**`Properties`** : 为新对象添加属性, 规则如同 ***`Object.defineProperties(obj, Prototype)`***.
+
+```JavaScript
+    let obj_1 = {
+        a: 'hello',
+        b: 'word'
+    }
+    let obj_2 = Object.create(obj_1, {name: {value: 'obj_2'}})
+    >obj_2
+    // {name: 'obj_2', _proto_: {a: 'hello', b: 'word'}}
+```
+
 ### Object.assign()
 
 **描述** :
@@ -47,25 +150,6 @@ tags:
     Object.assign(obj_2, obj_3)
     // > obj_2
     // { a: 'hello', b: 'world' }
-```
-
-### Object.create()
-
-**描述** :
-创建一个新对象, 并将内部属性 ***`[[Prototype]]`*** 指向源对象.
-**语法** :
-> *`Object.create(sources[, Properties])`*
-**`sources`** : 提供原型的源对象.
-**`Properties`** : 为新对象添加属性, 规则如同 ***`Object.defineProperties(obj, Prototype)`***.
-
-```JavaScript
-    let obj_1 = {
-        a: 'hello',
-        b: 'word'
-    }
-    let obj_2 = Object.create(obj_1, {name: {value: 'obj_2'}})
-    >obj_2
-    // {name: 'obj_2', _proto_: {a: 'hello', b: 'word'}}
 ```
 
 ### Object.defineProperty()
@@ -106,51 +190,6 @@ tags:
     let obj_2 = Object.create(obj_1, {name: {value: 'obj_2'}})
     >obj_2
     // {name: 'obj_2', _proto_: {a: 'hello', b: 'word'}}
-```
-
-### Object.entries()
-
-**描述** :
-由给定对象自身可枚举属性的键值对数组组成的数组. 属性的顺序与通过 `for...in` 循环对象的属性值所给出的顺序相同.
-**语法** :
-> *`Object.entries(target)`*
-**`target`** : 目标对象.
-
-```JavaScript
-    let obj_1 = {
-        a: 'hello',
-        b: 'word'
-    }
-    let obj_2 = Object.entries(obj_1)
-    // > obj_2
-    // [ [ 'a', 'hello' ], [ 'b', 'word' ] ]
-
-    let map = new Map(obj_2)
-    // > map
-    // Map { 'a' => 'hello', 'b' => 'word' }
-
-```
-
-### Object.freeze()
-
-**描述** :
-冻结一个对象, 将不能向该对象添加新的属性, 不能修改、删除已有属性, 以及不能修改已有属性的可枚举性、可配置性、可写性. 如果属性是对象, 除非被冻结, 否则也是可以修改的. 数组作为对象, 被冻结后, 元素不可被修改. `[[Extensible]]` 内部属性为 ***false***. 对象属性的 `[[Configurable]]` 为false. 若是对象属性描述符为数据描述符, 则对象属性的 `[[Writable]]` 为 ***false***.
-**语法** :
-> *`Object.freeze(target)`*
-**`target`** : 目标对象.
-
-```JavaScript
-    let obj_1 = {
-        a: 'hello',
-        b: {
-            c: 'world'
-        }
-    }
-    Object.freeze(obj_1)
-    obj_1.a = 'hi'
-    obj_1.b.c = '世界'
-    // > obj_1
-    // { a: 'hello', b: { c: '世界' } }
 ```
 
 ### Object.getOwnPropertyDescriptor()
@@ -227,6 +266,211 @@ tags:
     // [ Symbol(a) ]
 ```
 
+### Object.preventExtensions()
+
+**描述** :
+使得对象变得不可扩展. 即设置对象内部 `[[Extensible]]` 值为 ***false***.
+> *`Object.preventExtensions(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj_1 = {
+        a: 'hello',
+        b: {
+            c: 'world'
+        }
+    }
+    let property_1 = Object.getOwnPropertyDescriptor(obj_1, 'a')
+    let boolean_1 = Object.isExtensible(obj_1)
+    Object.preventExtensions(obj_1)
+    let property_2 = Object.getOwnPropertyDescriptor(obj_1, 'a')
+    let boolean_2 = Object.isExtensible(obj_1)
+    // > property_1
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: true }
+    // > property_2
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: true }
+    // > boolean_1
+    // true
+    // > boolean_2
+    // false
+```
+
+### Object.seal()
+
+**描述** :
+使得对象变得不可扩展. 即设置对象内部 `[[Extensible]]` 值为 ***false***. 对象属性的 `[[Configurable]]` 为 ***false***.
+> *`Object.seal(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj_1 = {
+        a: 'hello',
+        b: {
+            c: 'world'
+        }
+    }
+    let property_1 = Object.getOwnPropertyDescriptor(obj_1, 'a')
+    let boolean_1 = Object.isExtensible(obj_1)
+    Object.seal(obj_1)
+    let property_2 = Object.getOwnPropertyDescriptor(obj_1, 'a')
+    let boolean_2 = Object.isExtensible(obj_1)
+    // > property_1
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: true }
+    // > property_2
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: false }
+    // > boolean_1
+    // true
+    // > boolean_2
+    // false
+```
+
+### Object.freeze()
+
+**描述** :
+冻结一个对象, 将不能向该对象添加新的属性, 不能修改、删除已有属性, 以及不能修改已有属性的可枚举性、可配置性、可写性. 如果属性是对象, 除非被冻结, 否则也是可以修改的. 数组作为对象, 被冻结后, 元素不可被修改. `[[Extensible]]` 内部属性为 ***false***. 对象属性的 `[[Configurable]]` 为 ***false***. 若是对象属性描述符为数据描述符, 则对象属性的 `[[Writable]]` 为 ***false***.
+**语法** :
+> *`Object.freeze(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj_1 = {
+        a: 'hello',
+        b: {
+            c: 'world'
+        }
+    }
+    let property_1 = Object.getOwnPropertyDescriptor(obj_1, 'a')
+    let boolean_1 = Object.isExtensible(obj_1)
+    Object.freeze(obj_1)
+    let property_2 = Object.getOwnPropertyDescriptor(obj_1, 'a')
+    let boolean_2 = Objct.isExtensible(obj_1)
+    obj_1.a = 'hi'
+    obj_1.b.c = '世界'
+    // > obj_1
+    // { a: 'hello', b: { c: '世界' } }
+    // > property_1
+    // { value: 'hello',
+    // writable: true,
+    // enumerable: true,
+    // configurable: true }
+    // > property_2
+    // { value: 'hello',
+    // writable: false,
+    // enumerable: true,
+    // configurable: false }
+    // > boolean_2
+    // true
+    // > boolean_2
+    // false
+```
+
+### Object.isExtensible()
+
+**描述** :
+判断一个对象是否可扩展的. 即是否可添加新的属性. 新对象 `[[Extensible]]` 默认为 ***true*** . ***Object.preventExtensions(target)***, ***Object.seal(target)*** 或 ***Object.freeze(target)*** 可将目标对象内部属性 `[[Extensible]]` 置为 ***false***.
+**语法** :
+> *`Object.isExtensible(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {}
+    let boolean_1 = Object.isExtensible(obj)
+    Object.freeze(obj)
+    let boolean_2 = Object.isExtensible(obj)
+    // > boolean_1
+    // true
+    // > boolean_2
+    // false
+```
+
+### OObject.isSealed()
+
+**描述** :
+判断一个对象是否被密封. 若对象的内部属性 `[[Extensible]]` 为 ***false***, 返回 ***true***. 若对象属性的 `[[Configurable]]` 为 ***true***, 返回 ***false***. 否则, 返回 ***false***.
+**语法** :
+> *`Object.isSealed(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {}
+    let boolean_1 = Object.isFrozen(obj)
+    Object.defineProperty(obj, 'a', {configurable: false})
+    let boolean_2 = Object.isFrozen(obj)
+    Object.preventExtensions(obj)
+    let boolean_3 = Object.isFrozen(obj)
+    // > boolean_1
+    // false
+    // > boolean_2
+    // false
+    // > boolean_3
+    // true
+```
+
+### Object.isFrozen()
+
+**描述** :
+判断一个对象是否被冻结. 若对象的内部属性 `[[Extensible]]` 为 ***false***, 返回 ***true***. 若对象属性的 `[[Configurable]]` 为 ***true***, 返回 ***false***. 若是对象属性描述符为数据描述符, 对象属性的 `[[Writable]]` 为 ***true***, 返回 ***false***. 否则, 返回 ***false***.
+**语法** :
+> *`Object.isFrozen(target)`*
+**`target`** : 目标对象.
+
+```JavaScript
+    let obj = {}
+    let boolean_1 = Object.isFrozen(obj)
+    Object.freeze(obj)
+    let boolean_2 = Object.isFrozen(obj)
+    // > boolean_1
+    // true
+    // > boolean_2
+    // false
+
+    let obj = {}
+    let boolean_1 = Object.isFrozen(obj)
+    Object.defineProperty(obj, 'a', {writable: false})
+    let boolean_2 = Object.isFrozen(obj)
+    Object.defineProperty(obj, 'a', {configurable: false})
+    let boolean_3 = Object.isFrozen(obj)
+    Object.preventExtensions(obj)
+    let boolean_4 = Object.isFrozen(obj)
+    // > boolean_1
+    // false
+    // > boolean_2
+    // false
+    // > boolean_3
+    // false
+    // > boolean_4
+    // true
+```
+
+### Object.setPrototypeOf()
+
+**描述** :
+使得对象变得不可扩展. 即设置对象内部 `[[Extensible]]` 值为 ***false***. 对象属性的 `[[Configurable]]` 为 ***false***.
+> *`Object.setPrototypeOf(target, prototype)`*
+**`target`** : 目标对象.
+**`prototype`** : 原型对象(对象或 ***null***).
+
+```JavaScript
+    let obj_1 = {a: 1}
+    let obj_2 = {b: 2}
+    Object.setPrototypeOf(obj_2, obj_1)
+    let proto_1 = Object.getPrototypeOf(obj_2)
+    // > proto_1
+    // { a: 1 }
+```
+
 ### Object.getPrototypeOf()
 
 **描述** :
@@ -268,48 +512,3 @@ tags:
     Object.is(NaN, NaN)    // true *
     Object.is(-0, -0)  //true
 ```
-
-### Object.isExtensible()
-
-**描述** :
-判断一个对象是否可扩展的. 即是否可添加新的属性. 新对象 `[[Extensible]]` 默认为 ***true*** . ***Object.preventExtensions(target)***, ***Object.seal(target)*** 或 ***Object.freeze(target)*** 可将目标对象内部属性 `[[Extensible]]` 置为 ***false***.
-**语法** :
-> *`Object.isExtensible(target)`*
-**`target`** : 目标对象.
-
-```JavaScript
-    let obj = {}
-    let boolean_1 = Object.isExtensible(obj)
-    Object.freeze(obj)
-    let boolean_2 = Object.isExtensible(obj)
-    // > boolean_1
-    // true
-    // > boolean_2
-    // false
-```
-
-### Object.isFrozen()
-
-**描述** :
-判断一个对象是否被冻结. 对象的内部属性 `[[Extensible]]` 为 ***false***, 返回 ***true***. 若对象属性的 `[[Configurable]]` 为 ***true***, 返回 ***false***. 若是对象属性描述符为数据描述符, 对象属性的 `[[Writable]]` 为 ***true***, 返回 ***false***. 否则, 返回 ***false***.
-**语法** :
-> *`Object.isFrozen(target)`*
-**`target`** : 目标对象.
-
-```JavaScript
-    let obj = {}
-    let boolean_1 = Object.isExtensible(obj)
-    Object.freeze(obj)
-    let boolean_2 = Object.isExtensible(obj)
-    // > boolean_1
-    // true
-    // > boolean_2
-    // false
-```
-
-### OObject.isSealed()
-### Object.keys()
-### Object.preventExtensions()
-### OObject.seal()
-### Object.setPrototypeOf()
-### Object.values()
