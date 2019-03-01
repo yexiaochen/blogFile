@@ -144,4 +144,27 @@
             console.log(`serial-2:在${interval}毫秒后完成`)
         })
     }
+
+    // sequence
+    Promise.resolve().then(value => {
+        console.log('promise-1-1', value)
+        Promise.resolve().then((value) => {
+            console.log('promise-1-2', value)
+        }).then((value) => {
+            console.log('promise-1-3', value)
+        })
+    }).then(value => {
+        console.log('promise-1-4', value)
+    })
+
+    Promise.resolve().then(value => {
+        console.log('promise-2-1', value)
+        Promise.resolve().then((value) => {
+            console.log('promise-2-2', value)
+        }).then((value) => {
+            console.log('promise-2-3', value)
+        })
+    }).then(value => {
+        console.log('promise-2-4', value)
+    })
 ```
