@@ -55,16 +55,18 @@
     var async = function (x = Date.now(), callback) {
         try{
             // do something now
+            // throw 'Error'
             console.log('async:初始时间戳', x)
             setTimeout(() => {
                 try{
                     // do something in the future
+                    // throw 'Error'
                     let interval = Date.now() - x;
                     callback && callback(null, `async:在${interval}毫秒后异步完成`)
                 }catch(error){
                     callback(error)
                 }
-            }, 1000)
+            }, 3000)
         }catch(error){
             callback(error)
         }
@@ -77,33 +79,69 @@
     var asyncPromise = function (x = Date.now()) {
         return new Promise((resolve, reject) => {
             // do something now
+            // throw 'Error'
             console.log('asyncPromise:初始时间戳', x)
             setTimeout(() => {
                 try{
                     // do something in the future
+                    // throw 'Error'
                     let interval = Date.now() - x;
                     resolve(`asyncPromise在${interval}毫秒后异步完成`)
                 }catch(error){
                     reject(error)
                 }
-            }, 1000)
+            }, 3000)
         })
     }
-
     asyncPromise(undefined).then(value => {
         console.log('asyncPromise', value)
     }, error => {
         console.log('errorPromise', error)
     })
 
-var promiseWrap = function(fn){s
-    return function() {
-        let args = Array.from(arguments);
-        return new Promise((resolve, reject) => {
-        fn.apply(null, args.concat(arguments, (error, value) => {
-            error ? reject(error): resolve(value)
-        }))
-    })
+    // Promise Wrap
+    var promiseWrap = function(fn){
+        return function() {
+            let args = Array.from(arguments);
+            return new Promise((resolve, reject) => {
+                fn.apply(null, args.concat(arguments, (error, value) => {
+                    error ? reject(error): resolve(value)
+                }))
+            })
+        }
     }
-}
+
+    // parallel Promise
+    var parallel = (x = Date.now()) => {
+        Promise.resolve().then(() => {
+            new Promise(resolve => {
+                setTimeout(() => {
+                    let interval = Date.now() - x;
+                    resolve(`parallel-1:在${interval}毫秒后完成`)
+                }, 3000)
+            }).then(value => {
+                console.log(value)
+            })
+        }).then(value => {
+            let interval = Date.now() - x;
+            console.log(`parallel-2:在${interval}毫秒后完成`)
+        })
+    }
+
+    // serial Promise
+    var serial = (x = Date.now()) => {
+        Promise.resolve().then(() => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    let interval = Date.now() - x;
+                    resolve(`serial-1:在${interval}毫秒后完成`)
+                }, 3000)
+            }).then(value => {
+                console.log(value)
+            })
+        }).then(value => {
+            let interval = Date.now() - x;
+            console.log(`serial-2:在${interval}毫秒后完成`)
+        })
+    }
 ```
