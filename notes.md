@@ -99,17 +99,7 @@
         console.log('errorPromise', error)
     })
 
-    // Promise Wrap
-    var promiseWrap = function(fn){
-        return function() {
-            let args = Array.from(arguments);
-            return new Promise((resolve, reject) => {
-                fn.apply(null, args.concat(arguments, (error, value) => {
-                    error ? reject(error): resolve(value)
-                }))
-            })
-        }
-    }
+
 
     // parallel Promise
     var parallel = (x = Date.now()) => {
