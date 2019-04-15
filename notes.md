@@ -57,7 +57,7 @@ var Person = /** @class */ (function () {
 ```
 
 TypeScript 编译后，可以看出来，类其实就是一个函数而已。
-在 ES6 之前，通过构造函数的方式 `new` 出对象，造出的对象拥有和共享了构造函数内部绑定的属性方法及原型上的属性方法。TypeScript 里的接口描述类类型就是类的实例部分应该遵循的类型模板。作为类的静态部分 ———— 构造函数，函数也有自己的属性特征。
+在 ES6 之前，通过构造函数的方式 `new` 出对象，造出的对象拥有和共享了构造函数内部绑定的属性方法及原型上的属性方法。TypeScript 里的接口描述的类类型就是类的实例部分应该遵循的类型模板。作为类的静态部分 ———— 构造函数，函数应该也有自己的属性特征。
 
 ```JavaScript
 interface static_person {
@@ -79,4 +79,42 @@ let person: static_person = class Person implements instance_person{
     }
 }
 new person('夜曉宸',18)
+```
+
+由以上代码可以看出，类的静态部分和动态部分都有各自的类型模板。若是想要将类自身作为类型模板又该如何做呢？最简单的方法就是 `typeof 类` 的方式。
+
+```JavaScript
+class Person {
+  static age: number = 18;
+    constructor(public name: string, public age: number) {}
+    say(name) {
+        return `Hi,${name}`
+    }
+}
+class Man {
+    static age: number;
+    constructor(public name: string, public age: number) {}
+    public sex = 'man';
+    say(name){return `Hi, ${this.sex},${name}`}
+}
+let man: typeof Person = Man;
+new Man('夜曉宸', 18)
+```
+
+类静态部分、类实例部分和类自身，它们都有自己需要遵循的类型模板。知道了其中的区别，也就能更好得理解类作为接口使用、接口继承类等用法了。
+
+```JavaScript
+class Person {
+  name: string;
+  age: number;
+}
+interface Man extends Person {
+  sex: 'man'
+}
+
+let man: Man = {
+    name: '夜曉宸',
+    age: 18,
+    sex: 'man'
+}
 ```
