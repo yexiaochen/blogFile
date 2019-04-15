@@ -118,3 +118,22 @@ let man: Man = {
     sex: 'man'
 }
 ```
+
+除了结构上的约束，类也通过访问修饰符对其成员做了约束，包括 public，private，protected，readonly等。
+
+```JavaScript
+Person {
+  private name: string;
+  protected age: number;
+}
+
+interface SayPerson extends Person {
+  sayHi(): string
+}
+
+class Human extends Person implements SayPerson {
+  sayHi() {
+    return `Hi, ${this.name}`
+  }
+}
+```
