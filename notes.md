@@ -379,7 +379,7 @@ let man: Man = {
 }
 ```
 
-除了结构上的约束，类也通过访问修饰符对其成员做了约束，包括 public，private，protected，readonly等。
+除了结构上的约束，类也通过访问修饰符对其成员做了约束，包括 public，private，protected，readonly等。对了，还有抽象类，尤其是抽象方法和接口的使用方法很像。
 
 ```JavaScript
 class Person {
@@ -402,7 +402,7 @@ class Human extends Person implements SayPerson {
 
 > 如果一个标识符的类型不确定，该如何？
 
-对于一个内部逻辑相差不大，入參类型不同的函数来说，没必要因为参数类型不同而重复大部分代码，这时就需要一个变量变量来代替。
+对于一个内部逻辑相差不大，入參类型不同的函数来说，没必要因为参数类型不同而重复写一套代码，这时就需要一个类型变量来代替。
 
 ```JavaScript
 /* 范型函数 */
@@ -434,4 +434,35 @@ let person: Creat<Person> = create;
 
 person(Person)    // OK
 person(Human)    // Error
+```
+
+注意了，类型变量表示的是类型，而不是值。类型变量里塞的可能是任意一个类型，但根据场景，我们最好能够更加精确的描述标识符的类型。应了上面的一句话，「想写好 Typescript 代码，就应该精确描述标识符的类型，而不是随处安放的 `any`」。所以对于泛型，我们也可以做些约束，即，泛型约束。
+
+```JavaScript
+class Person {
+  name: string;
+  age: number;
+}
+interface Man extends Person {
+  sex: 'man'
+}
+function getProperty<T, K extends keyof T>(obj: T, key: K): any {
+  return obj[key]
+}
+let man: Man = {
+    name: '夜曉宸',
+    age: 18,
+    sex: 'man'
+}
+getProperty(man, 'sex')
+```
+
+用类型变量来注释标识符的类型有时会觉得还是不够精确。
+
+> 知道标识符的可能类型，然后组合起来
+
+```JavaScript
+function add(x: number|string, y: number|string): number {
+  if ()
+}
 ```
