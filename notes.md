@@ -1,468 +1,82 @@
-# 随手记
-
-## Script snipt
-
-```JavaScript
-Function.prototype.Call = function(){
-    let args = Array.from(arguments), context = args.shift();
-    context = Object(context);
-    context.fn = this;
-    let result = context.fn(...args);
-    return (delete context.fn) && result;
-}
-
-function deepClone(params) {
-  if (Array.isArray(params)) {
-    return params.reduce((accumulator, currentValue) => {
-      (typeof currentValue === 'object') ? accumulator.push(deepClone(currentValue)) : accumulator.push(currentValue);
-      return accumulator;
-    }, [])
-  } else {
-    return Reflect.ownKeys(params).reduce((accumulator, currentValue) => {
-      (typeof params[currentValue] === 'object') ? accumulator[currentValue] = deepClone(params[currentValue]) : accumulator[currentValue] = params[currentValue];
-      return accumulator;
-    }, {})
-  }
-}
-```
-
-## 驯化 JavaScript
-
-说完接口，就要说说类了，因为它们有多相似的地方，比如充当对象的类型模板，继承成员等。
-
-> 类到底是什么呢？
-
-ES6 引入了 Class（类）这个概念，通过 class 关键字，可以定义类, Class 实质上是 JavaScript 现有的基于原型的继承的语法糖. Class 可以通过extends关键字实现继承。TypeScript 除了实现了所有 ES6 中的类的功能以外，还添加了一些新的用法。
-
-```JavaScript
-class Person {
-    static age: number = 18;
-    constructor(public name: string, public age: number) { }
-    sayHi(name: string): string{
-        return `Hi,${name}`
-    }
-}
-/* —————— 人工分割线 —————— */
-var Person = /** @class */ (function () {
-    function Person(name, age) {
-        this.name = name;
-        this.age = age;
-    }
-    Person.prototype.sayHi = function (name) {
-        return "Hi," + name;
-    };
-    Person.age = 18;
-    return Person;
-}());
-```
-
-TypeScript 编译后，可以看出来，类其实就是一个函数而已。
-在 ES6 之前，通过构造函数的方式 `new` 出对象，造出的对象拥有和共享了构造函数内部绑定的属性方法及原型上的属性方法。TypeScript 里的接口描述的类类型就是类的实例部分应该遵循的类型模板。作为类的静态部分 ———— 构造函数，函数应该也有自己的属性特征。
-
-```JavaScript
-interface static_person {
-    age: number,
-    new (name: string, age: number);
-}
-
-interface instance_person {
-    name: string,
-    age: number,
-    say(name: string): string
-}
-
-let person: static_person = class Person implements instance_person{
-    static age: number = 18;
-    constructor(public name: string, public age: number) { }
-    say(name) {
-        return `Hi,${name}`
-    }
-}
-new person('夜曉宸',18)
-```
-
-由以上代码可以看出，类的静态部分和动态部分都有各自的类型模板。若是想要将类自身作为类型模板又该如何做呢？最简单的方法就是 `typeof 类` 的方式。
-
-```JavaScript
-class Person {
-  static age: number = 18;
-    constructor(public name: string, public age: number) {}
-    say(name) {
-        return `Hi,${name}`
-    }
-}
-class Man {
-    static age: number;
-    constructor(public name: string, public age: number) {}
-    public sex = 'man';
-    say(name){return `Hi, ${this.sex},${name}`}
-}
-let man: typeof Person = Man;
-new Man('夜曉宸', 18)
-```
-
-类静态部分、类实例部分和类自身，它们都有自己需要遵循的类型模板。知道了其中的区别，也就能更好得理解类作为接口使用、接口继承类等用法了。
-
-```JavaScript
-class Person {
-  name: string;
-  age: number;
-}
-interface Man extends Person {
-  sex: 'man'
-}
-
-let man: Man = {
-    name: '夜曉宸',
-    age: 18,
-    sex: 'man'
-}
-```
-
-除了结构上的约束，类也通过访问修饰符对其成员做了约束，包括 public，private，protected，readonly等。
-
-```JavaScript
-Person {
-  private name: string;
-  protected age: number;
-}
-
-interface SayPerson extends Person {
-  sayHi(): string
-}
-
-class Human extends Person implements SayPerson {
-  sayHi() {
-    return `Hi, ${this.name}`
-  }
-}
-```
-........................................
----
-title: 用Type驯化JavaScript
-date: 2019-04-14 18:04:17
-tags:
-    - TypeScript
-category:
-    - 这个想法不一定对
----
-
-> TypeScript 具有类型系统，且是 JavaScript 的超集。它可以编译成普通的 JavaScript 代码。TypeScript 支持任意浏览器，任意环境，任意系统并且是开源的。
-
-作为弱类型、动态型语言，JavaScript 就像未驯化的野马一样。每个人都能上去坐两下，但是真正能够驾驭的只能是个中好手。
-近几年，前端经历了快速的发展已经不再是以前随便玩玩的小玩意了。面对越来越大型、越来越持久的项目来说，这种宽松的方式反而成了障碍。
-
-> 东西做大了，随之而来的就是各种规矩
-
-规矩是从经验中总结，同时也是为了朝更好的方向发展，就比如编程里的设计原则和设计模式。「Man maketh manners」，记得王牌特工里，主角们在教育别人的时候总喜欢说这么一句话，「不知礼，无以立也」。在 TypeScript 里，「礼」就是 Type，Type 就是规矩。Typescript 通过类型注解提供编译时的静态类型检查，提前发现错误，同时也提高了代码的可读性和可维护性。
-
-> TypeScript 里的类型注解是一种轻量级的为函数或变量添加约束的方式
-
-在 JavaScript 里，变量用于在特定时间存储特定值，其值及数据类型可以在脚本的生命周期内改变。而在 TypeScript 中，标识符（变量、函数、类、属性的名字，或者函数参数）在其定义时就指定了类型（或类型推论出）。在编译阶段，若出现了期望之外的类型，TypeScript 将会提示抛错（虽然有时候并不会影响程序的正常运行）。
-
-在 TypeScript 中，通过 `: 类型` 的方式为标识符添加类型注解。
-
-```JavaScript
-  let isDone: boolean = false;    // boolean；
-  let decLiteral: number = 6;    // number；
-  let name: string = "bob";    // string；
-  let list: number[] = [1, 2, 3];    // Array<number>;
-  let list: Array<number> = [1, 2, 3];    // Array<number>;
-  let x: [string, number];    // tuple;
-  enum Color {Red, Green, Blue}    // enum;
-  let notSure: any = 4;    // any;
-  function warnUser(): void {    // void;
-    console.log("This is my warning message");
-  }
-  let u: undefined = undefined;    // undefined;
-  let n: null = null;    // null;
-  function error(message: string): never {    // never;
-    throw new Error(message);
-  }
-  let obj: object = {};    // object
-```
-
-在 TypeScript 中，数组（Array）是合并了相同类型的对象，而元组（tuple）合并了不同类型的对象。（`Array<any>`,也可以合并不同类型的数据）
-
-> 类型注解中的类型就是以上的那些类型么？
-
-TypeScript 的核心原则之一是对值所具有的结构进行类型检查，它有时被称做「鸭式辨型法」或「结构性子类型化」。上面的只是基础类型，它们是填充结构的基本单位而已。在 TypeScript 里，类型不应该还停留在 JavaScript 数据类型的层面上，还应包括基础类型的组合结构化。
-
-```JavaScript
-let str: 'Hello';    // 字符串字面量类型；
-str = 'Hi'    // error；
-
-let something: 'Hello' | 1;    // 联合类型；
-something = 1    // ok；
-
-let obj: {name: string, age: number};    // 对象字面量
-obj = {
-    name: "夜曉宸",
-    age: 18,
-}
-```
-
-换句话说，在定义标识符的时候，用一个类型模板来描述标识符的结构和内部类型组成。即类型模板就是标识符期望的样子。
-
-> 代码是给人看的，顺便是给机器运行的
-
-都说好的代码就该这样。但是在 TypeScript 里，这两句话可以颠倒下顺序。代码是给机器运行的，顺便是给人看的。
-在谈到 TypeScript 的好处时，有一条很重要，增强了编译器和 IDE 的功能，包括代码补全、接口提示、跳转到定义、重构等。而这些也得益于标识符的类型的精确划分或表述，所以想写好 Typescript 代码，就应该精确描述标识符的类型，而不是随处安放的 `any`。
-
-> 表述复杂结构最常用的方式 ———— 接口
-
-接口是 JavaScript 中没有的东西，是一个非常灵活的概念，可以抽象行为，也可以描述「对象的形状」。
-对于需要复用的结构类型，就可以使用接口的方式，而不是对象字面量内联式注解。
-
-```JavaScript
-interface Iperson {    // 对象
-    name: string,
-    age: number,
-    sayHi(): void,
-}
-let obj: Iperson = {
-    name: "夜曉宸",
-    age: 18,
-    sayHi: ()=> {}
-}
-
-/* ——————人工分割线—————— */
-
-interface Iperson {    // 函数类型
-    (name: string, age: number): string
-}
-let person: Iperson = (name, age) => {
-    return `${name},${age}`
-}
-person('夜曉宸', 18);
-
-/* ——————人工分割线—————— */
-
-interface Iperson {    // 构造函数
-    new (name: string, age: number)
-}
-let person: Iperson = class Person {
-    name: string;
-    age: number;
-    constructor(name, age) {
-        this.name = name;
-        this.age = age;
-    }
-}
-new person('夜曉宸', 18);
-
-/* ——————人工分割线—————— */
-
-interface Iperson {    // 类实现接口
-    name: string,
-    age: number,
-}
-class Person implements Iperson{
-    name = '夜曉宸'
-    age = 18
-}
-new Person()
-
-/* ——————人工分割线—————— */
-
-interface Iperson {    // 混合类型
-    (name, age): string,
-    age: number,
-}
-
-function Person(): Iperson {
-    let me = <Iperson>function (name, age): string {
-        return `${name}, ${age}`
-    }
-    me.age = 18;
-    return me;
-}
-
-let person = Person();
-person('夜曉宸', 18)
-person.age
-
-```
-
-以上接口在对象、普通函数、构造函数、类上的表现。对于接口的属性，还可以做到精确控制，如可选属性、任意属性、只读属性等。
-最后，接口间可以继承，接口还可以继承类。当接口继承类时，它会继承类的成员但不包括其实现，但是若继承了拥有私有或受保护的成员类时，这个接口只能由这个类或其子类来实现了，这个和类的访问修饰符的特点有关系。
-
-说完接口，就要说说类了，因为它们有多相似的地方，比如充当对象的类型模板，继承成员等。
-
-> 类到底是什么呢？
-
-ES6 引入了 Class（类）这个概念，通过 class 关键字，可以定义类, Class 实质上是 JavaScript 现有的基于原型的继承的语法糖. Class 可以通过extends关键字实现继承。TypeScript 除了实现了所有 ES6 中的类的功能以外，还添加了一些新的用法。
-
-```JavaScript
-class Person {
-    static age: number = 18;
-    constructor(public name: string, public age: number) { }
-    sayHi(name: string): string{
-        return `Hi,${name}`
-    }
-}
-/* —————— 人工分割线 —————— */
-var Person = /** @class */ (function () {
-    function Person(name, age) {
-        this.name = name;
-        this.age = age;
-    }
-    Person.prototype.sayHi = function (name) {
-        return "Hi," + name;
-    };
-    Person.age = 18;
-    return Person;
-}());
-```
-
-TypeScript 编译后，可以看出来，类其实就是一个函数而已。
-
-在 ES6 之前，通过构造函数的方式 `new` 出对象，造出的对象拥有和共享了构造函数内部绑定的属性方法及原型上的属性方法。TypeScript 里的接口描述的类类型就是类的实例部分应该遵循的类型模板。作为类的静态部分 ———— 构造函数，函数应该也有自己的属性特征。
-
-```JavaScript
-interface static_person {
-    age: number,
-    new (name: string, age: number);
-}
-
-interface instance_person {
-    name: string,
-    age: number,
-    say(name: string): string
-}
-
-let person: static_person = class Person implements instance_person{
-    static age: number = 18;
-    constructor(public name: string, public age: number) { }
-    say(name) {
-        return `Hi,${name}`
-    }
-}
-new person('夜曉宸',18)
-```
-
-由以上代码可以看出，类的静态部分和动态部分都有各自的类型模板。若是想要将类自身作为类型模板又该如何做呢？最简单的方法就是 `typeof 类` 的方式。
-
-```JavaScript
-class Person {
-  static age: number = 18;
-    constructor(public name: string, public age: number) {}
-    say(name) {
-        return `Hi,${name}`
-    }
-}
-class Man {
-    static age: number;
-    constructor(public name: string, public age: number) {}
-    public sex = 'man';
-    say(name){return `Hi, ${this.sex},${name}`}
-}
-let man: typeof Person = Man;
-new Man('夜曉宸', 18)
-```
-
-类静态部分、类实例部分和类自身，它们都有自己需要遵循的类型模板。知道了其中的区别，也就能更好得理解类作为接口使用、接口继承类等用法了。
-
-```JavaScript
-class Person {
-  name: string;
-  age: number;
-}
-interface Man extends Person {
-  sex: 'man'
-}
-
-let man: Man = {
-    name: '夜曉宸',
-    age: 18,
-    sex: 'man'
-}
-```
-
-除了结构上的约束，类也通过访问修饰符对其成员做了约束，包括 public，private，protected，readonly等。对了，还有抽象类，尤其是抽象方法和接口的使用方法很像。
-
-```JavaScript
-class Person {
-  private name: string;
-  protected age: number;
-}
-
-interface SayPerson extends Person {
-  sayHi(): string
-}
-
-class Human extends Person implements SayPerson {
-  sayHi() {
-    return `Hi, ${this.age}`
-  }
-}
-```
-
-知道了访问修饰符的特点，也就明白之前说过的「当接口继承类时，它会继承类的成员但不包括其实现，但是若继承了拥有私有或受保护的成员类时，这个接口只能由这个类或其子类来实现了」。
-
-> 如果一个标识符的类型不确定，该如何？
-
-对于一个内部逻辑相差不大，入參类型不同的函数来说，没必要因为参数类型不同而重复写一套代码，这时就需要一个类型变量来代替。
-
-```JavaScript
-/* 范型函数 */
-class Person {
-    className = 'person'
-}
-class Human {
-    classname = 'human'
-}
-function create<T>(Class: new () => T) : T{
-    return new Class();
-}
-create(Person).className
-
-/* 范型接口 */
-interface Creat<T>{
-    (Class: new () => T):T
-}
-class Person {
-    className = 'person'
-}
-class Human {
-    classname = 'human'
-}
-function create<T>(Class: new () => T) : T{
-    return new Class();
-}
-let person: Creat<Person> = create;
-
-person(Person)    // OK
-person(Human)    // Error
-```
-
-注意了，类型变量表示的是类型，而不是值。类型变量里塞的可能是任意一个类型，但根据场景，我们最好能够更加精确的描述标识符的类型。应了上面的一句话，「想写好 Typescript 代码，就应该精确描述标识符的类型，而不是随处安放的 `any`」。所以对于泛型，我们也可以做些约束，即，泛型约束。
-
-```JavaScript
-class Person {
-  name: string;
-  age: number;
-}
-interface Man extends Person {
-  sex: 'man'
-}
-function getProperty<T, K extends keyof T>(obj: T, key: K): any {
-  return obj[key]
-}
-let man: Man = {
-    name: '夜曉宸',
-    age: 18,
-    sex: 'man'
-}
-getProperty(man, 'sex')
-```
-
-用类型变量来注释标识符的类型有时会觉得还是不够精确。
-
-> 知道标识符的可能类型，然后组合起来
-
-```JavaScript
-function add(x: number|string, y: number|string): number {
-  if ()
-}
-```
+# webpack
+
+* rules
+// 这里是匹配条件，每个选项都接收一个正则表达式或字符串
+// test 和 include 具有相同的作用，都是必须匹配选项
+// exclude 是必不匹配选项（优先于 test 和 include）
+// 最佳实践：
+// - 只在 test 和 文件名匹配 中使用正则表达式
+// - 在 include 和 exclude 中使用绝对路径数组
+// - 尽量避免 exclude，更倾向于使用 include
+
+* 入口
+	* 入口起点(entry point)指示 webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始。进入入口起点后，
+	* webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。入口起点(entry point)指示 webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的.
+	* 在 webpack < 4 的版本中，通常将 vendor 作为单独的入口起点添加到 entry 选项中，以将其编译为单独的文件（与 CommonsChunkPlugin 结合使用）。而在 webpack 4 中不鼓励这样做。而是使用 optimization.splitChunks 选项，将 vendor 和 app(应用程序) 模块分开，并为其创建一个单独的文件。不要 为 vendor 或其他不是执行起点创建 entry。
+
+* 出口
+	* 配置 output 选项可以控制 webpack 如何向硬盘写入编译文件。注意，即使可以存在多个 entry 起点，但只指定一个 output 配置。
+
+
+* loader
+	* 入口起点(entry point)指示 webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。
+	* loader 用于对模块的源代码进行转换。loader 可以使你在 import 或"加载"模块时预处理文件。因此，loader 类似于其他构建工具中“任务(task)”，并提供了处理前端构建步骤的强大方法。loader 可以将文件从不同的语言（如 TypeScript）转换为 JavaScript 或将内联图像转换为 data URL。loader 甚至允许你直接在 JavaScript 模块中 import CSS文件！
+
+* plugin
+  * 插件是 webpack 生态系统的重要组成部分，为社区用户提供了一种强大方式来直接触及 webpack 的编译过程(compilation process)。插件能够 钩入(hook) 到在每个编译(compilation)中触发的所有关键事件。在编译的每一步，插件都具备完全访问 compiler 对象的能力，如果情况合适，还可以访问当前 compilation 对象。
+  
+* mode
+	* 提供 mode 配置选项，告知 webpack 使用相应环境的内置优化。
+
+*  webpack 配置是标准的 Node.js CommonJS 模块
+*  webpack 模块 
+	* ES2015 import 语句
+	* CommonJS require() 语句
+	* AMD define 和 require 语句
+	* css/sass/less 文件中的 @import 语句。
+	* 样式(url(...))或 HTML 文件(<img src=...>)中的图片链接
+
+* optimization
+	* 从 webpack 4 开始，会根据你选择的 mode 来执行不同的优化，不过所有的优化还是可以手动配置和重写。
+
+* devtool
+	* eval-source-map - 每个模块使用 eval() 执行，并且 source map 转换为 DataUrl 后添加到 eval() 中。初始化 source map 时比较慢，但是会在重新构建时提供比较快的速度，并且生成实际的文件。行数能够正确映射，因为会映射到原始代码中。它会生成用于开发环境的最佳品质的 source map。
+
+* externals
+	* 配置选项提供了「从输出的 bundle 中排除依赖」的方法
+	* 防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖(external dependencies)。
+
+* loader
+	* 默认情况下，资源文件会被转化为 UTF-8 字符串，然后传给 loader。每一个 loader 都可以用 String 或者 Buffer 的形式传递它的处理结果。Complier 将会把它们在 loader 之间相互转换。
+
+* 安装
+	* 对于大多数项目，我们建议本地安装。这可以在引入突破式变更(breaking change)版本时，更容易分别升级项目。通常会通过运行一个或多个 npm scripts 以在本地 node_modules 目录中查找安装的 webpack，来运行 webpack ：node_modules/.bin/webpack 命令行；
+	* npx 的原理很简单，就是运行的时候，会到node_modules/.bin路径和环境变量$PATH里面，检查命令是否存在。由于 npx 会检查环境变量$PATH，所以系统命令也可以调用。
+	* Node 8.2/npm 5.2.0 以上版本提供的 npx 命令，可以运行在开始安装的 webpack package 中的 webpack 二进制文件（即 ./node_modules/.bin/webpack）
+	* 不推荐全局安装 webpack。这会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中，可能会导致构建失败。
+	* 如果你使用 webpack v4+ 版本，你还需要安装 CLI。
+	* 如果 webpack.config.js 存在，则 webpack 命令将默认选择使用它。我们在这里使用 --config 选项只是向你表明，可以传递任何名称的配置文件。这对于需要拆分成多个文件的复杂配置是非常有用
+	*  webpack 这样的工具，将动态打包所有依赖（创建所谓的 依赖图(dependency graph)）。这是极好的创举，因为现在每个模块都可以明确表述它自身的依赖，可以避免打包未使用的模块。
+	* 在 JavaScript 模块中 import 一个 CSS 文件，你需要安装 style-loader 和 css-loader;在使用 css-loader 时，import MyImage from './my-image.png'，url('./my-image.png')，而 html-loader 以相同的方式处理 `<img src="./my-image.png" />`
+	* 清理 dist：在每次构建前清理 /dist 文件夹，这样只会生成用到的文件。clean-webpack-plugin；
+	* webpack 通过 manifest，可以追踪所有模块到输出 bundle 之间的映射。WebpackManifestPlugin；
+
+* webpack-dev-server 
+	* webpack-dev-server 在编译之后不会写入到任何输出文件。而是将 bundle 文件保留在内存中，然后将它们 serve 到 server 中，就好像它们是挂载在 server 根路径上的真实文件一样。如果你的页面希望在其他不同路径中找到 bundle 文件，则可以通过 dev server 配置中的 publicPath 选项进行修改。
+	* webpack-dev-middleware 是一个封装器(wrapper)，它可以把 webpack 处理过的文件发送到一个 server。
+	* 如果你在技术选型中使用了 webpack-dev-middleware 而没有使用 webpack-dev-server，请使用 webpack-hot-middleware package，以在你的自定义 server 或应用程序上启用 HMR。
+
+* tree shaking
+	* tree shaking 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)。它依赖于 ES2015 模块语法的 静态结构 特性;通过 package.json 的 "sideEffects" 属性作为标记，向 compiler 提供提示，表明项目中的哪些文件是 "pure(纯的 ES2015 模块)"，由此可以安全地删除文件中未使用的部分。;
+
+* 保留一个 "common(通用)" 配置，webpack-merge ；
+
+* 构建性能
+	 * 对最少数量的必要模块使用 loader；而是使用 include 字段仅将 loader 应用在实际需要将其转换的模块所处路径；
+	 * 引导时间(bootstrap) ；每个额外的 loader/plugin 都有其启动时间。尽量少使用工具。
+	 * 解析；
+	 * 减少编译结果的整体大小，以提高构建性能。尽量保持 chunk 体积小；
+	 * thread-loader 可以将非常消耗资源的 loader 分流给一个 worker pool；
+	 * 使用 cache-loader 启用持久化缓存。使用 package.json 中的 "postinstall" 清除缓存目录。
+
+	* webpack 只能理解 JavaScript 和 JSON 文件
