@@ -124,3 +124,73 @@ app.listen(PORT, () => {
 }
 
 ```
+
+## webpack
+
+```JavaScript
+// eslint-loader
+{
+        enforce: "pre",
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "eslint-loader",
+        options: {
+          formatter: require("eslint-friendly-formatter"),
+        }
+      },
+.eslintrc
+{
+    "parser": "babel-eslint",
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "extends": "airbnb",
+    "rules": {
+        "semi": [0],
+        "react/jsx-filename-extension": [0]
+    }
+}
+module.exports = {
+  module: {
+    rule:
+    {
+      test: /\.(png|svga?|jpg|gif)$/,
+      use: [
+        {
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            fallback: 'file-loader'
+          }
+        }
+      ].concat(isDev ? [] : [
+        {
+          loader: 'image-webpack-loader',
+          options: {
+            pngquant: {
+              speed: 4,
+              quality: '75-90'
+            },
+            optipng: {
+              optimizationLevel: 7
+            },
+            mozjpeg: {
+              quality: 70,
+              progressive: true
+            },
+            gifsicle: {
+              interlaced: false
+            }
+          }
+        }
+      ])
+    }
+  }
+}
+```
