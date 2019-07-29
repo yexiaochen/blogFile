@@ -54,7 +54,7 @@ const logoutSchedule = () => {
   schedule.scheduleJob({
     start: startTime,
     endTime: endTime,
-    rule: config.schedule.logout
+    rule: loginRule
   }, async () => {
     let now = new Date();
     let logoutLog = `${now} - ${logURL} logout successed! \r\n`

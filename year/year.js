@@ -30,8 +30,29 @@ Page({
     totalTips: '',
     exhaustedTips: '',
     leavedTips: '',
+
+    activeYearType: 'year',
+    yearType: [
+      {
+        type: 'year',
+        text: '是一年'
+      },
+      {
+        type: 'life',
+        text: '还是一辈子'
+      }
+    ]
   },
   computeDays(){
+    if(this.data.fromDate != fromDate || this.data.toDate != toDate){
+      this.setData({
+        activeYearType: 'life'
+      })
+    } else {
+      this.setData({
+        activeYearType: 'year'
+      })
+    }
     let fromTime = Date.parse(this.data.fromDate);
     let toTime = Date.parse(this.data.toDate);
     let nowTime = Date.parse(now);
@@ -40,9 +61,13 @@ Page({
     let exhaustedTime = nowTime - fromTime;
     let leavedTime = toTime - nowTime;
     let totalTips = exhaustedTime >= 0 ? `我这一生也就 ${Conversion(totalTime)} 天` : `你怕不是地球人吧`;
-    let exhaustedTips = exhaustedTime >= 0 ? `过去了 ${Conversion(exhaustedTime)} 天` : `你回到未来时，捎上我`;
+    let exhaustedTips = exhaustedTime >= 0 ? `已过去了 ${Conversion(exhaustedTime)} 天` : `你回到未来时，捎上我`;
     let leavedTips = leavedTime >= 0 ? `还剩下 ${Conversion(leavedTime)} 天` : `你回到过去时，捎上我`;
-
+    this.setData({
+      totalTips,
+      exhaustedTips,
+      leavedTips
+    })
     console.log('reserved', totalTips, exhaustedTips, leavedTips);
   },
   bindFromDateChange(event){
@@ -60,6 +85,24 @@ Page({
     })
     this.computeDays();
     console.log('to', value)
+  },
+  selectedYearType(event){
+    let data = event.currentTarget.dataset;
+    let {type} = data;
+    if(type == 'year'){
+      this.setData({
+        fromDate: fromDate,
+        toDate: toDate,
+        activeYearType: type
+      })
+    }else{
+      this.setData({
+        fromDate: now,
+        toDate: `${year+100}-${month+1}-${day}`,
+        activeYearType: type
+      })
+    }
+    this.computeDays();
   },
   selectedType(event){
     let data = event.currentTarget.dataset;

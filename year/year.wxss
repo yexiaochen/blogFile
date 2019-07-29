@@ -1,0 +1,84 @@
+.little_target{
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  background: #fffefe;
+  height: 100%;
+  color: #696969;
+  }
+  .target_type{
+    display: flex;
+    flex-direction: row;
+  }
+  .target_type_item{
+    width: calc(100% / 3);
+    text-align: center;
+    margin: 30rpx 0;
+    font-size: 45rpx;
+    color: #999;
+  }
+  .target_type_year{}
+  .target_type_month{
+    border-left: 1rpx solid #ccc;
+    border-right: 1rpx solid #ccc;
+  }
+  .actived_index{
+    color: rgb(66, 66, 66);
+  }
+  .target_type_day{}
+  .picker_item{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline; 
+    margin: 15rpx 0;
+  }
+  .picker_title{
+    font-size: 50rpx;
+    width: 45%;
+    text-align: right;
+    font-family: cursive, serif, Georgia;
+  }
+  .picker_date{
+    font-family: "Gill Sans", sans-serif, system-ui;
+    font-size: 45rpx;
+     margin-left: 16px;
+  }
+  .target_content{}
+  .content_year{}
+  .target_range{}
+  .target_picker{}
+  .picker_from{}
+  .from_title{}
+  .from_date{}
+  .picker_to{}
+  .to_title{}
+  .to_date{}
+  .year_type{
+    text-align: center;
+    font-family: "宋体", SimSun,"Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-size: 40rpx;
+    color: rgb(238, 238, 238);
+    margin: 0rpx 260rpx;
+    line-height: 1.6;
+  }
+  .year_type_year{
+
+  }
+  .year_type_life{}
+  .year_type_item{
+
+  }
+  .selected_year_type{
+    text-shadow: #999 1rpx 1rpx 1rpx;
+    color: #696969;
+  }
+  .time_tips{
+    text-align: center;
+    font-size: 35rpx;
+    font-weight: bold;
+    line-height: 1.6;
+  }
+  .tips_item{
+    
+  }
+  .content_month{}
+  .content_day{}
+  
