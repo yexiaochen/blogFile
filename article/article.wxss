@@ -1,0 +1,50 @@
+.little_target{
+font-family: Consolas, Monaco, 'Andale Mono', monospace;
+}
+.target_type{
+  display: flex;
+  flex-direction: row;
+}
+.target_type_item{
+  width: calc(100% / 3);
+  text-align: center;
+  margin: 30rpx 0;
+  font-size: 45rpx;
+  color: rgba(0, 0, 0, 0.205);
+}
+.target_type_year{}
+.target_type_month{
+  border-left: 1rpx solid #ccc;
+  border-right: 1rpx solid #ccc;
+}
+.actived_index{
+  color: rgb(66, 66, 66);
+}
+.target_type_day{}
+.picker_item{
+  display: flex;
+  flex-direction: row;
+  align-items: baseline; 
+}
+.picker_title{
+  font-size: 50rpx;
+  width: 40%;
+  text-align: right;
+  font-family: cursive, serif, Georgia;
+}
+.picker_date{
+  width: 60%;
+  font-family: "Gill Sans", sans-serif, system-ui;
+}
+.target_content{}
+.content_year{}
+.target_range{}
+.target_picker{}
+.picker_from{}
+.from_title{}
+.from_date{}
+.picker_to{}
+.to_title{}
+.to_date{}
+.content_month{}
+.content_day{}

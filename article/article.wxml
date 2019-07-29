@@ -1,0 +1,29 @@
+<view class="little_target">
+  <view class="target_type">
+    <view class="target_type_item target_type_{{item.type}} {{activedIndex === index ? 'actived_index':''}}" wx:for="{{targetType}}" wx:key="{{index}}" data-index="{{index}}" data-type="{{item.type}}" bindtap="selectedType">
+      <text>{{item.text}}</text>
+    </view>
+  </view>
+  <view class="target_content">
+    <view wx:if="{{activedIndex === 0}}" class="content_year">
+      <view class="target_range">
+        <view class="target_picker">
+          <view class="picker_item picker_from">
+            <view class="picker_title from_title">From:</view>
+            <picker class="picker_date" mode="date" value="{{fromDate}}" start="1970-01-01" end="2100-09-01" bindchange="bindFromDateChange">
+              <view>{{fromDate}}</view>
+            </picker>
+          </view>
+          <view class="picker_item picker_to">
+            <view class="picker_title to_title">To:</view>
+            <picker class="picker_date" mode="date" value="{{toDate}}" start="{{fromDate}}" end="2100-09-01" bindchange="bindToDateChange">
+              <view class="picker_date">{{toDate}}</view>
+            </picker>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{activedIndex === 1}}" class="content_month">month</view>
+    <view wx:if="{{activedIndex === 2}}" class="content_day">day</view>
+  </view>
+</view>
