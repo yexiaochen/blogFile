@@ -16,6 +16,7 @@ function lcs(word1, word2) {
   return max;
 }
 ```
+## 开发难点及注意事项
 
 1.2	开发难点及注意事项
 啦啦中的 Scratch3是结合啦啦的现有业务在开源项目上进行二次开发的项目。
@@ -43,3 +44,6 @@ e.g. ：
 
 
 就以上问题，为了后期更好地维护，开发时需要给出可行方案。¬¬¬¬
+
+
+google-analytics 谷歌分析，Request Blocking
